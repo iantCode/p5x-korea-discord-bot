@@ -35,7 +35,10 @@ def compile_text_from_html(content_html: str) -> str:
     content = ''
     for p in soup.select('p'):
         if len(p.select('span')) > 0:
-            content += '\n' + p.select_one('span').get_text(' ', strip=True)
+            content += '\n'
+            for span in p.select('span'):
+                span_text = span.get_text()
+                content += span_text
         else:
             content += '\n' + p.get_text('\n', strip=True)
     
@@ -43,4 +46,4 @@ def compile_text_from_html(content_html: str) -> str:
 
 
 if __name__ == "__main__":
-    print(get_feed_by_id(4569827).content)
+    print(get_feed_by_id(4637065).content)
