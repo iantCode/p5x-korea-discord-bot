@@ -1,20 +1,23 @@
 from lounge.get_board_feeds import BoardType, BoardResult, get_board_feeds_by_id
 from lounge.get_feed import get_feed_by_id
 from youtube.get_new_videos import get_new_videos, VideoResult
+from imap.get_email_code import get_email_code
 from datetime import datetime
 from typing import Dict, List
 import asyncio
 import random
 
 async def check_new_content():
-    from bot.post import post_feed, post_video
+    from bot.post import post_feed, post_video, post_code
     
     new_feeds: Dict[int, BoardResult] = {}
     new_videos: Dict[str, VideoResult] = {}
+    new_exchange_code: str = ''
     while True:
         print("[API] checking", datetime.now())
         feeds_list = get_new_feeds()
         video_feeds = get_new_videos()
+        new_code = get_email_code()
 
         if not new_feeds:
             for feed in feeds_list:
@@ -22,6 +25,8 @@ async def check_new_content():
             
             for video in video_feeds:
                 new_videos[video.video_id] = video
+
+            new_exchange_code = new_code
         
         else:
             for feed in feeds_list:
@@ -36,6 +41,11 @@ async def check_new_content():
                     print(f"새 동영상 발견! {video.title}")
                     await post_video(video)
                     new_videos[video.video_id] = video
+            
+            if new_exchange_code != new_code:
+                new_exchange_code = new_code
+                print(f"새 이메일 교환 코드 발견! {new_code}")
+                await post_code(new_code)
 
         await asyncio.sleep(55 + random.random() * 10)
 

@@ -15,6 +15,11 @@ async def post_feed(board_result: BoardResult, feed: FeedResult):
         await channel.send(feed.img_path)
 
 
+async def post_code(new_code: str):
+    channel = p5xbot.get_channel(1274913413285543956)
+    await channel.send(f"<@&1274971218801332245>\n새 이메일 교환 코드입니다.\n```{new_code}```")
+
+
 def get_right_channel(board_type: BoardType) -> discord.TextChannel:
     if board_type == BoardType.NOTIF:
         return p5xbot.get_channel(1274913413285543956)
